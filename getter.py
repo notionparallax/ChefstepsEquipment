@@ -28,18 +28,18 @@ def login(username, password):
 login("your@email.address", "yourPassword")
 
 with open("eq.csv", "a") as myfile:
-    myfile.write("title, equiptment...\n")
+    myfile.write("title, equipment...\n")
     for urlBit in content:
         row = ""
         ff.get('https://www.chefsteps.com/activities/'+urlBit)
         # assert 'Recipe | ChefSteps' in ff.title
         time.sleep(3)
         title      = ff.find_elements_by_css_selector('h1')[0]
-        equiptment = ff.find_elements_by_css_selector('.activity-amounts-equipment div')  
+        equipment = ff.find_elements_by_css_selector('.activity-amounts-equipment div')  
         
         row += ( title.text.encode('ascii', 'ignore') + ",")
         
-        for e in equiptment:
+        for e in equipment:
             row += ( e.text.encode('ascii', 'ignore') + ",")
         
     	myfile.write(row + "\n")

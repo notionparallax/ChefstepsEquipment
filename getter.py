@@ -65,8 +65,8 @@ with open("equipment.csv", "w") as equipment_file, open("ingredients.csv", "w") 
         title = ff.find_elements_by_css_selector('h1')[0].text.encode('ascii', 'ignore') 
         title = title.replace(",", "|comma|")
         
-        i_row = title + "," + get_it('.ingredient-title-desc')          + "\n" # ingredients
-        e_row = title + "," + get_it('.activity-amounts-equipment div') + "\n" # equipment
+        i_row = title + "," + get_it('.ingredients-wrapper .ingredient-title-desc') + "\n" # ingredients
+        e_row = title + "," + get_it('.activity-amounts-equipment div')             + "\n" # equipment
     	equipment_file.write(  e_row )
         ingredient_file.write( i_row )
         print "\n",title

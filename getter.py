@@ -3,18 +3,32 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 # from selenium.webdriver.common.by import By
+import json
 
 import time
 
 with open("login") as f:
     credentials = f.readlines()
 
-with open("chefstepsURLS") as f:
-    content = f.readlines()
+# with open("chefstepsURLS") as f:
+#     content = f.readlines()
+
+# // // Get the updated version of this by scrolling all the way to the
+# // bottom of the recipes page: https://www.chefsteps.com/gallery
+# // then running the following js in the console. It'll copy the result
+# // to the clipboard.
+# //
+# // var urls = [];
+# // document.querySelectorAll("matrix-item-card a").forEach(function(element) {
+# //     urls.push(element.href.split("/")[4]);
+# // });
+# // copy(urls);
+content = json.load(open("newURLs.json"))
+print content
 
 
 ff = webdriver.Firefox()
-ff.implicitly_wait(10) # seconds # give it a really long potential timeout in case something strange happens
+ff.implicitly_wait(10)  # seconds # give it a really long potential timeout in case something strange happens
 
 
 def login(username, password):
@@ -34,7 +48,7 @@ def make_cell(element):
     ff.implicitly_wait(0)
 
     try:
-        name = element.find_element_by_tag_name('a'   ).text.encode('ascii', 'ignore')
+        name = element.find_element_by_tag_name('a').text.encode('ascii', 'ignore')
     except:
         name = element.text.encode('ascii', 'ignore')
 
@@ -44,7 +58,7 @@ def make_cell(element):
     #     comments = ""
     ff.implicitly_wait(90)
 
-    return name.replace(",", "|comma|")#, comments.replace(",", "|comma|")
+    return name.replace(",", "|comma|")  # , comments.replace(",", "|comma|")
 
 
 def get_it(selector):
@@ -71,8 +85,8 @@ with open("equipment.csv", "w") as equipment_file, open("ingredients.csv", "w") 
         title = ff.find_elements_by_css_selector('h1')[0].text.encode('ascii', 'ignore')
         title = title.replace(",", "|comma|")
 
-        i_row = title + "," + get_it('.ingredients-wrapper .ingredient-title-desc') + "\n" # ingredients
-        e_row = title + "," + get_it('.activity-amounts-equipment div')             + "\n" # equipment
+        i_row = title + "," + get_it('.ingredients-wrapper .ingredient-title-desc') + "\n"  # ingredients
+        e_row = title + "," + get_it('.activity-amounts-equipment div')             + "\n"  # equipment
         equipment_file.write(  e_row)
         ingredient_file.write( i_row)
         print "\n", title

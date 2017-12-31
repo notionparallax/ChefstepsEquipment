@@ -6,6 +6,9 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import time
 
+with open("login") as f:
+    credentials = f.readlines()
+
 with open("chefstepsURLS") as f:
     content = f.readlines()
 

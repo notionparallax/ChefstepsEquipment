@@ -10,19 +10,16 @@ import time
 with open("login") as f:
     credentials = f.readlines()
 
-# with open("chefstepsURLS") as f:
-#     content = f.readlines()
-
-# // // Get the updated version of this by scrolling all the way to the
-# // bottom of the recipes page: https://www.chefsteps.com/gallery
-# // then running the following js in the console. It'll copy the result
-# // to the clipboard.
-# //
-# // var urls = [];
-# // document.querySelectorAll("matrix-item-card a").forEach(function(element) {
-# //     urls.push(element.href.split("/")[4]);
-# // });
-# // copy(urls);
+# Get the updated version of this by scrolling all the way to the
+# bottom of the recipes page: https://www.chefsteps.com/gallery
+# then running the following js in the console. It'll copy the result
+# to the clipboard.
+#
+# var urls = [];
+# document.querySelectorAll("matrix-item-card a").forEach(function(element) {
+#     urls.push(element.href.split("/")[4]);
+# });
+# copy(urls);
 content = json.load(open("newURLs.json"))
 print content
 

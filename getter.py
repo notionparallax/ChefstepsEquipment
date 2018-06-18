@@ -1,14 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-# from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
 import json
-
 import time
 
-with open("login") as f:
-    credentials = f.readlines()
 
 # Get the updated version of this by scrolling all the way to the
 # bottom of the recipes page: https://www.chefsteps.com/gallery
@@ -21,75 +17,101 @@ with open("login") as f:
 # });
 # copy(urls);
 content = json.load(open("newURLs.json"))
-print content
+# print(content)
+
+options = webdriver.ChromeOptions()
+options.add_argument("--start-maximized")
+
+driver = webdriver.Chrome('../chromedriver', chrome_options=options)
+# give it a really long potential timeout in case something strange happens
+driver.implicitly_wait(10)  # seconds
 
 
-ff = webdriver.Firefox()
-ff.implicitly_wait(10)  # seconds # give it a really long potential timeout in case something strange happens
+def login(credentials_path):
+    """Log into the chefsteps site.
 
-
-def login(username, password):
-    ff.get('https://www.chefsteps.com')
-    ff.find_element_by_id("nav-login").click()
-    fields = ff.find_elements_by_css_selector(".login-form input")
+    This allows access to premium recipes.
+    Read the credentials from a file.
+    It's formatted as
+    username
+    password
+    so [0] is the username and [1] is the password.
+    """
+    with open(credentials_path) as f:
+        credentials = f.readlines()
+    username, password = credentials[0], credentials[1]
+    driver.get('https://www.chefsteps.com')
+    driver.find_element_by_id("nav-login").click()
+    fields = driver.find_elements_by_css_selector(".login-form input")
     fields[0].send_keys(username)
     fields[1].send_keys(password)
-    print "entered", username, password
-    time.sleep(1)
-    ff.find_element_by_css_selector("button.modal-submit").click()
+    print("entered", username, password)
+    # time.sleep(1)
+    # driver.find_element_by_css_selector("button.modal-submit").click()
     time.sleep(3)
-    assert 'Home' in ff.title
+    # print(driver.title)
+    # assert 'Home' in driver.title
 
 
 def make_cell(element):
-    ff.implicitly_wait(0)
+    """TODO: work out what this function does."""
+    driver.implicitly_wait(0)
 
     try:
-        name = element.find_element_by_tag_name('a').text.encode('ascii', 'ignore')
+        name = element.find_element_by_tag_name('a')
     except:
-        name = element.text.encode('ascii', 'ignore')
+        name = element
 
-    # try:
-    #     comments = element.find_element_by_tag_name('span').text.encode('ascii', 'ignore')
-    # except:
-    #     comments = ""
-    ff.implicitly_wait(90)
-
-    return name.replace(",", "|comma|")  # , comments.replace(",", "|comma|")
+    driver.implicitly_wait(90)
+    return name.text.replace(",", "|comma|")
 
 
 def get_it(selector):
-    row = ""
-    list_things = ff.find_elements_by_css_selector(selector)
+    """Get list of things and format for csv."""
+    list_things = driver.find_elements_by_css_selector(selector)
 
+    row = ""
     if list_things:
         for lt in list_things:
-            row += make_cell(lt)+","
+            row += make_cell(lt) + ","
 
     return row
 
 
-login(credentials[0], credentials[1])
+with open("equipment.csv", "w") as equipment_file:
+    with open("ingredients.csv", "w") as ingredient_file:
+        equipment_file.write("title, equipment...\n")
+        ingredient_file.write("title, ingredient...\n")
 
-with open("equipment.csv", "w") as equipment_file, open("ingredients.csv", "w") as ingredient_file:
-    equipment_file.write("title, equipment...\n")
-    for urlBit in content:
-        ff.get('https://www.chefsteps.com/activities/'+urlBit)
-        # assert 'Recipe | ChefSteps' in ff.title
-        time.sleep(3)
+login("../chefstepsLogin")
 
-        # get the title of the page
-        title = ff.find_elements_by_css_selector('h1')[0].text.encode('ascii', 'ignore')
-        title = title.replace(",", "|comma|")
+for urlBit in content:
+    with open("equipment.csv", "a") as equipment_file:
+        with open("ingredients.csv", "a") as ingredient_file:
+            driver.get('https://www.chefsteps.com/activities/'+urlBit)
+            time.sleep(3)
 
-        i_row = title + "," + get_it('.ingredients-wrapper .ingredient-title-desc') + "\n"  # ingredients
-        e_row = title + "," + get_it('.activity-amounts-equipment div')             + "\n"  # equipment
-        equipment_file.write(  e_row)
-        ingredient_file.write( i_row)
-        print "\n", title
-        print i_row
-        print e_row
+            # get the title of the page
+            title = driver.find_elements_by_css_selector('h1')[0].text
+            title = title.replace(",", "|comma|")
 
-equipment_file.close()
-ingredient_file.close()
-ff.quit()
+            ingredients = get_it(" ".join(['.ingredients-wrapper',
+                                           'cs-ingredients',
+                                           'cs-ingredient',
+                                           '.ingredient-title-desc']))
+            i_row = "{t},{i}\n".format(t=title, i=ingredients)
+            ingredient_file.write(i_row)
+
+            equipment = get_it('.activity-amounts-equipment div')
+            e_row = "{t},{e}\n".format(t=title, e=equipment)
+            equipment_file.write(e_row)
+
+            print("i_row", i_row)
+            print("e_row", e_row)
+
+            equipment_file.close()
+            ingredient_file.close()
+
+driver.quit()
+
+print("\nDONE!!\n")

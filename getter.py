@@ -28,6 +28,13 @@ driver = webdriver.Chrome('../chromedriver', chrome_options=options)
 driver.implicitly_wait(10)  # seconds
 
 
+def sanitise_string(s):
+    """Remove chars that will mess with the CSV spec."""
+    s = s.replace("\"", "″")
+    s = s.replace(",", "|comma|")
+    return s
+
+
 def login(credentials_path):
     """Log into the chefsteps site.
 
@@ -64,7 +71,7 @@ def make_cell(element):
         name = element
 
     driver.implicitly_wait(90)
-    return name.text.replace(",", "|comma|")
+    return sanitise_string(name.text)
 
 
 def get_it(selector):
@@ -94,7 +101,7 @@ for urlBit in content:
 
             # get the title of the page
             title = driver.find_elements_by_css_selector('h1')[0].text
-            title = title.replace(",", "|comma|")
+            title = sanitise_string(title)
 
             ingredients = get_it(" ".join(['.ingredients-wrapper',
                                            'cs-ingredients',

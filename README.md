@@ -10,6 +10,14 @@ They use a lot more specialist equipment than your average cook book, but there 
 
 The quick summary is that there are 300ish bits of unique kit, but you seem to be able to get by very nicely on 50 or so.
 
+# The latest:
+
+The google spreadheets mysteriously disapreared, so I've redone the scrape and some basic analysis in python.
+
+I'm going to keep going, so keep an eye out for updates.
+
+# more or less out of date:
+
 I did a little scrape to get the equipment from each recipe. The [python to do that is here](https://github.com/notionparallax/ChefstepsEquipment) and the results are below:
 <figure>
 <iframe src="https://docs.google.com/spreadsheets/d/1tf2GLSQexYe3346Gj7arfgbUxX9-3apWmRWRvjPzkYg/pubhtml?gid=1735103416&amp;single=true&amp;widget=true&amp;headers=false"></iframe>

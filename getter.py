@@ -87,8 +87,13 @@ def get_it(selector):
     return row
 
 
-with open("equipment.csv", "w") as equipment_file:
-    with open("ingredients.csv", "w") as ingredient_file:
+def get_title():
+    time.sleep(4) # nasty
+    title = driver.find_elements_by_css_selector('.hero-text h1')
+    title = list(set([e.text for e in title]))[0]
+    title = sanitise_string(title)
+    return title
+
         equipment_file.write("title, equipment...\n")
         ingredient_file.write("title, ingredient...\n")
 
@@ -101,8 +106,7 @@ for urlBit in content:
             time.sleep(3)
 
             # get the title of the page
-            title = driver.find_elements_by_css_selector('h1')[0].text
-            title = sanitise_string(title)
+                    title = get_title()
 
             ingredients = get_it(" ".join(['.ingredients-wrapper',
                                            'cs-ingredients',

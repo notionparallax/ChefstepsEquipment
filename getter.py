@@ -97,11 +97,15 @@ def get_title():
         equipment_file.write("title, equipment...\n")
         ingredient_file.write("title, ingredient...\n")
 
+
+equipment_file_path = "temp_equipment.csv"
+ingredients_file_path = "temp_ingredients.csv"
+
 login("../chefstepsLogin")
 
 for urlBit in content:
-    with open("equipment.csv", "a") as equipment_file:
-        with open("ingredients.csv", "a") as ingredient_file:
+    with open(equipment_file_path, "a") as equipment_file:
+        with open(ingredients_file_path, "a") as ingredient_file:
             driver.get('https://www.chefsteps.com/activities/'+urlBit)
             time.sleep(3)
 

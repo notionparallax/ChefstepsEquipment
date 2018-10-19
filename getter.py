@@ -130,8 +130,9 @@ for urlBit in content:
                                                e=equipment)
             equipment_file.write(e_row)
 
+                    print("{t} - {u}".format(t=title, u=urlBit))
             print("i_row", i_row)
-            print("e_row", e_row)
+                    print("e_row", e_row, "\n")
 
             equipment_file.close()
             ingredient_file.close()

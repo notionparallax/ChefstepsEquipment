@@ -94,6 +94,10 @@ def get_title():
     title = sanitise_string(title)
     return title
 
+
+def prep_files(equipment_file_path, ingredients_file_path):
+    with open(equipment_file_path, "w") as equipment_file:
+        with open(ingredients_file_path, "w") as ingredient_file:
         equipment_file.write("title, equipment...\n")
         ingredient_file.write("title, ingredient...\n")
 

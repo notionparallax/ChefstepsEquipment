@@ -104,6 +104,10 @@ def prep_files(equipment_file_path, ingredients_file_path):
 
 equipment_file_path = "temp_equipment.csv"
 ingredients_file_path = "temp_ingredients.csv"
+start_from_scratch = True
+
+if start_from_scratch:
+    prep_files(equipment_file_path, ingredients_file_path)
 
 login("../chefstepsLogin")
 

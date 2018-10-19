@@ -107,16 +107,19 @@ for urlBit in content:
 
             # get the title of the page
                     title = get_title()
+                    row_head = "{u},{t}".format(u=urlBit, t=title)
 
             ingredients = get_it(" ".join(['.ingredients-wrapper',
                                            'cs-ingredients',
                                            'cs-ingredient',
                                            '.ingredient-title-desc']))
-            i_row = "{t},{i}\n".format(t=title, i=ingredients)
+                    i_row = "{h},{i}\n".format(h=row_head, 
+                                               i=ingredients)
             ingredient_file.write(i_row)
 
             equipment = get_it('.activity-amounts-equipment div')
-            e_row = "{t},{e}\n".format(t=title, e=equipment)
+                    e_row = "{h},{e}\n".format(h=row_head, 
+                                               e=equipment)
             equipment_file.write(e_row)
 
             print("i_row", i_row)

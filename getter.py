@@ -110,6 +110,8 @@ login("../chefstepsLogin")
 for urlBit in content:
     with open(equipment_file_path, "a") as equipment_file:
         with open(ingredients_file_path, "a") as ingredient_file:
+            with open("failures.txt", "a") as failure_file:
+                try:
             driver.get('https://www.chefsteps.com/activities/'+urlBit)
             time.sleep(3)
 
@@ -136,6 +138,9 @@ for urlBit in content:
 
             equipment_file.close()
             ingredient_file.close()
+                except Exception as e:
+                    f = '{"e":{e}, "page": {urlBit}}'.format(e=e, page=urlBit)
+                    failure_file.write(f)
 
 driver.quit()
 

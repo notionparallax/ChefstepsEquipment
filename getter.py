@@ -30,6 +30,7 @@ driver.implicitly_wait(10)  # seconds
 
 def sanitise_string(s):
     """Remove chars that will mess with the CSV spec."""
+    s = s.replace("µm", "nanometer")
     s = s.replace("\"", "″")
     s = s.replace(",", "|comma|")
     return s

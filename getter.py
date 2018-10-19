@@ -23,7 +23,7 @@ content = json.load(open("newURLs.json"))
 options = webdriver.ChromeOptions()
 options.add_argument("--start-maximized")
 
-driver = webdriver.Chrome('../chromedriver', chrome_options=options)
+driver = webdriver.Chrome('chromedriver', chrome_options=options)
 # give it a really long potential timeout in case something strange happens
 driver.implicitly_wait(10)  # seconds
 
@@ -42,7 +42,7 @@ def login(credentials_path):
     This allows access to premium recipes.
     Read the credentials from a file.
     It's formatted as
-    username
+    username    
     password
     so [0] is the username and [1] is the password.
     """
@@ -54,10 +54,11 @@ def login(credentials_path):
     fields = driver.find_elements_by_css_selector(".login-form input")
     fields[0].send_keys(username)
     fields[1].send_keys(password)
-    print("entered", username, password)
-    # time.sleep(1)
+    time.sleep(1)
+    fields[1].send_keys(Keys.ENTER)
+    # print("entered", username, password)
     # driver.find_element_by_css_selector("button.modal-submit").click()
-    time.sleep(3)
+    time.sleep(5)
     # print(driver.title)
     # assert 'Home' in driver.title
 
@@ -98,50 +99,49 @@ def get_title():
 def prep_files(equipment_file_path, ingredients_file_path):
     with open(equipment_file_path, "w") as equipment_file:
         with open(ingredients_file_path, "w") as ingredient_file:
-        equipment_file.write("title, equipment...\n")
-        ingredient_file.write("title, ingredient...\n")
+            equipment_file.write("title, equipment...\n")
+            ingredient_file.write("title, ingredient...\n")
 
 
 equipment_file_path = "temp_equipment.csv"
 ingredients_file_path = "temp_ingredients.csv"
-start_from_scratch = True
 
-if start_from_scratch:
-    prep_files(equipment_file_path, ingredients_file_path)
+prep_files("temp_equipment.csv", "temp_ingredients.csv")
 
 login("../chefstepsLogin")
 
-for urlBit in content:
+
+for urlBit in content[44:]:
     with open(equipment_file_path, "a") as equipment_file:
         with open(ingredients_file_path, "a") as ingredient_file:
             with open("failures.txt", "a") as failure_file:
                 try:
-            driver.get('https://www.chefsteps.com/activities/'+urlBit)
-            time.sleep(3)
+                    driver.get('https://www.chefsteps.com/activities/'+urlBit)
+                    time.sleep(3)
 
-            # get the title of the page
+                    # get the title of the page
                     title = get_title()
                     row_head = "{u},{t}".format(u=urlBit, t=title)
 
-            ingredients = get_it(" ".join(['.ingredients-wrapper',
-                                           'cs-ingredients',
-                                           'cs-ingredient',
-                                           '.ingredient-title-desc']))
+                    ingredients = get_it(" ".join(['.ingredients-wrapper',
+                                                'cs-ingredients',
+                                                'cs-ingredient',
+                                                '.ingredient-title-desc']))
                     i_row = "{h},{i}\n".format(h=row_head, 
                                                i=ingredients)
-            ingredient_file.write(i_row)
+                    ingredient_file.write(i_row)
 
-            equipment = get_it('.activity-amounts-equipment div')
+                    equipment = get_it('.activity-amounts-equipment div')
                     e_row = "{h},{e}\n".format(h=row_head, 
                                                e=equipment)
-            equipment_file.write(e_row)
+                    equipment_file.write(e_row)
 
                     print("{t} - {u}".format(t=title, u=urlBit))
-            print("i_row", i_row)
+                    print("i_row", i_row)
                     print("e_row", e_row, "\n")
 
-            equipment_file.close()
-            ingredient_file.close()
+                    equipment_file.close()
+                    ingredient_file.close()
                 except Exception as e:
                     f = '{"e":{e}, "page": {urlBit}}'.format(e=e, page=urlBit)
                     failure_file.write(f)
